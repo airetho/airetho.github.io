@@ -7,10 +7,18 @@
 			var wood = 0;
 			var sticks = 0;
 			
+			function update() {
+				if(wood < 0) {
+					document.getElementById("capitalism").hidden = false;
+					wood = Math.floor(wood*105)/100;
+					document.getElementById("woodText").innerHTML = "You have " + wood + " wood.";
+				} else {
+					document.getElementById("capitalism").hidden = true;
+				}
+			}
 			
-			
-			
-				
+			setInterval("update()",1000);
+
 			async function punchTree() {
 				wood = wood + 1;				
 				document.getElementById("woodText").innerHTML = "You have " + wood + " wood.";
@@ -30,22 +38,18 @@
 		</script>
 	</head>
 	<body>
-		<p id="woodText" hidden>You have 0 wood
-			<span id="capitalism" hidden style="color:red">    Your debt is accruing interest!</span></p>
+		<p id="woodText" hidden>You have 0 wood</p>
+		<p id="capitalism" hidden style="color:red">Your debt is accruing interest!</p>
 		<p id="sticksText" hidden>You have 0 sticks</p>
 		<input type="button" id="woodButton" value="Punch tree" onclick="punchTree()">
 		<input type="button" id="sticksButton" value="Craft sticks" onclick="craftSticks()" hidden>
+		
+		
 		<script>
-			setInterval("update()",1000);
 			
-			function update() {
-				if(wood < 0) {
-					document.getElementById("capitalism").hidden = false;
-					wood = Math.round(wood*105)/100
-				} else {
-					document.getElementById("capitalism").hidden = true;
-				}
-			}
+			
+			
+				
 		</script>
 	</body>
 </html>
