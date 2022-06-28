@@ -3,47 +3,105 @@
 	<head>
 		<title>Minecraft 2</title>
 		<script>
+		
+			const resNames = ["wood", "sticks"];
+			var resVals = [0,0];
+			var clickMultis = [.1,1];
+			var toolFlags = [false, false];
 			
-			var wood = 0;
-			var sticks = 0;
-			
-			function update() {
-				if(wood < 0) {
-					document.getElementById("capitalism").hidden = false;
-					wood = Math.floor(wood*105)/100;
-					document.getElementById("woodText").innerHTML = "You have " + wood + " wood.";
-				} else {
-					document.getElementById("capitalism").hidden = true;
+			function update() { //unlocks buttons
+				if(resVals[0] > 1.9999) {
+					document.getElementById("sticksButton").disabled = false;
+				}
+				if(!toolFlags[0]) {
+					if(resVals[0] > 2.9999 && resVals[1] > 1.9999) {
+						document.getElementById("woodAxeButton").hidden = false;
+						document.getElementById("woodAxeButton").disabled = false;
+					}
+				}
+				if(!toolFlags[1]) {
+					if(resVals[0] > 2.9999 && resVals[1] > 1.9999) {
+						document.getElementById("woodPickButton").hidden = false;
+						document.getElementById("woodPickButton").disabled = false;
+					}
 				}
 			}
 			
-			setInterval("update()",1000);
+			setInterval("update()",250);
 
-			async function punchTree() {
-				wood = wood + 1;				
-				document.getElementById("woodText").innerHTML = "You have " + wood + " wood.";
+			async function punchTree() { //get 1
+				resVals[0] += clickMultis[0];				
+				document.getElementById("woodText").innerHTML = "You have " + resVals[0].toFixed(1) + " wood.";
 				document.getElementById("woodText").hidden = false;
 				document.getElementById("sticksButton").hidden = false;
+				
 			}
 				
-			function craftSticks() {
-				sticks = sticks + 4;
-				wood = wood - 2;
-				document.getElementById("woodText").innerHTML = "You have " + wood + " wood.";
-				document.getElementById("sticksText").innerHTML = "You have " + sticks + " sticks.";
+			function craftSticks() { //get 2 use 1
+				resVals[1] += 4;
+				resVals[0] -= 2;
+				document.getElementById("woodText").innerHTML = "You have " + resVals[0].toFixed(1) + " wood.";
+				document.getElementById("sticksText").innerHTML = "You have " + resVals[1] + " sticks."; //toFixed later?
 				document.getElementById("sticksText").hidden = false;
-					
+				if(resVals[0] < 2.9999) {
+					document.getElementById("woodPickButton").disabled = true;
+					document.getElementById("woodAxeButton").disabled = true;
+					if(resVals[0] < 1.9999) {
+						document.getElementById("sticksButton").disabled = true;
+					}
+				}
 			}
+			
+			function craftWoodAxe() {
+				document.getElementById("woodAxeButton").hidden = true;
+				toolFlags[0] = true;
+				clickMultis[0] = .5;
+				resVals[0] -= 3;
+				resVals[1] -= 2;
+				document.getElementById("woodText").innerHTML = "You have " + resVals[0].toFixed(1) + " wood.";
+				document.getElementById("sticksText").innerHTML = "You have " + resVals[1] + " sticks."; //toFixed later?
+				if(resVals[0] < 2.9999) {
+					document.getElementById("woodPickButton").disabled = true;
+					document.getElementById("woodAxeButton").disabled = true;
+					if(resVals[0] < 1.9999) {
+						document.getElementById("sticksButton").disabled = true;
+					}
+				}
+				
+			}
+			
+			function craftWoodPick() {
+				document.getElementById("woodPickButton").hidden = true;
+				toolFlags[1] = true;
+				resVals[0] -= 3;
+				resVals[1] -= 2;
+				document.getElementById("woodText").innerHTML = "You have " + resVals[0].toFixed(1) + " wood.";
+				document.getElementById("sticksText").innerHTML = "You have " + resVals[1] + " sticks."; //toFixed later?
+				if(resVals[0] < 2.9999) {
+					document.getElementById("woodPickButton").disabled = true;
+					document.getElementById("woodAxeButton").disabled = true;
+					if(resVals[0] < 1.9999) {
+						document.getElementById("sticksButton").disabled = true;
+					}
+				}
+			}
+			
+			
 			
 		</script>
 	</head>
 	<body>
-		<p id="woodText" hidden>You have 0 wood</p>
-		<p id="capitalism" hidden style="color:red">Your debt is accruing interest!</p>
-		<p id="sticksText" hidden>You have 0 sticks</p>
-		<input type="button" id="woodButton" value="Punch tree" onclick="punchTree()">
-		<input type="button" id="sticksButton" value="Craft sticks" onclick="craftSticks()" hidden>
+		<div>
+			<p id="woodText" hidden>You have 0 wood</p>
+			<p id="sticksText" hidden>You have 0 sticks</p>
+		</div>
 		
+		<div>
+			<input type="button" id="woodButton" value="Punch tree" onclick="punchTree()">
+			<input type="button" id="sticksButton" value="Craft sticks" onclick="craftSticks()" hidden disabled>
+			<input type="button" id="woodAxeButton" value="Craft wooden axe" onclick="craftWoodAxe()" hidden disabled>
+			<input type="button" id="woodPickButton" value="Craft wooden pickaxe" onclick="craftWoodPick()" hidden disabled>
+		</div>
 		
 		<script>
 			
