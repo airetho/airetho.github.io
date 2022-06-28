@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Minecraft 2</title>
+		<script>
+			
+			var wood = 0;
+			var sticks = 0;
+			
+			
+			
+			
+				
+			async function punchTree() {
+				wood = wood + 1;				
+				document.getElementById("woodText").innerHTML = "You have " + wood + " wood.";
+				document.getElementById("woodText").hidden = false;
+				document.getElementById("sticksButton").hidden = false;
+			}
+				
+			function craftSticks() {
+				sticks = sticks + 4;
+				wood = wood - 2;
+				document.getElementById("woodText").innerHTML = "You have " + wood + " wood.";
+				document.getElementById("sticksText").innerHTML = "You have " + sticks + " sticks.";
+				document.getElementById("sticksText").hidden = false;
+					
+			}
+			
+		</script>
+	</head>
+	<body>
+		<p id="woodText" hidden>You have 0 wood
+			<span id="capitalism" hidden style="color:red">    Your debt is accruing interest!</span></p>
+		<p id="sticksText" hidden>You have 0 sticks</p>
+		<input type="button" id="woodButton" value="Punch tree" onclick="punchTree()">
+		<input type="button" id="sticksButton" value="Craft sticks" onclick="craftSticks()" hidden>
+		<script>
+			setInterval("update()",1000);
+			
+			function update() {
+				if(wood < 0) {
+					document.getElementById("capitalism").hidden = false;
+					wood = Math.round(wood*105)/100
+				} else {
+					document.getElementById("capitalism").hidden = true;
+				}
+			}
+		</script>
+	</body>
+</html>
