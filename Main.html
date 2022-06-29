@@ -167,6 +167,7 @@
 				resVals[1] -= 2;
 				document.getElementById("ironText").innerHTML = "You have " + resVals[3] + " iron.";
 				document.getElementById("sticksText").innerHTML = "You have " + resVals[1] + " sticks.";
+				document.getElementById("4u").hidden = false;
 				if(resVals[3] < 2.9999) {
 					document.getElementById("ironPickButton").disabled = true;
 				}
@@ -185,6 +186,12 @@
 				}
 			}
 			
+			function justForYou() {
+				resVals[0] = 5*Math.floor(resVals[0]/10);
+				resVals[2] = 2*Math.floor(resVals[2]/2);
+				document.getElementById("woodText").innerHTML = "You have " + resVals[0].toFixed(1) + " wood.";
+				document.getElementById("stoneText").innerHTML = "You have " + resVals[2].toFixed(1) + " stone.";
+			}
 			
 		</script>
 	</head>
@@ -206,6 +213,7 @@
 			<input type="button" id="stonePickButton" value="Craft stone pickaxe" onclick="craftStonePick()" hidden disabled>
 			<input type="button" id="ironAxeButton" value="Craft iron axe" onclick="craftIronAxe()" hidden disabled>
 			<input type="button" id="ironPickButton" value="Craft iron pickaxe" onclick="craftIronPick()" hidden disabled>
+			<input type="button" id="4u" value="just for you uwu" style="background-color:magenta" onclick="justForYou()" hidden>
 		</div>
 
 	</body>
