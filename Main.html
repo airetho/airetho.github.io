@@ -4,37 +4,63 @@
 		<title>Minecraft 2</title>
 		<script>
 		
-			const resNames = ["wood", "sticks"];
-			var resVals = [0,0];
-			var clickMultis = [.1,1];
-			var toolFlags = [false, false];
+			//const resNames = ["wood", "sticks", "stone"];
+			var resVals = [0,0,0];
+			var clickMultis = [.1,1,.1];
+			var toolFlags = [false, false, false, false];
 			
 			function update() { //unlocks buttons
 				if(resVals[0] > 1.9999) {
 					document.getElementById("sticksButton").disabled = false;
 				}
 				if(!toolFlags[0]) {
-					if(resVals[0] > 2.9999 && resVals[1] > 1.9999) {
+					if(resVals[1] > 1.9999) {
 						document.getElementById("woodAxeButton").hidden = false;
-						document.getElementById("woodAxeButton").disabled = false;
+						if(resVals[0] > 2.999) {
+							document.getElementById("woodAxeButton").disabled = false;
+						}
 					}
 				}
 				if(!toolFlags[1]) {
-					if(resVals[0] > 2.9999 && resVals[1] > 1.9999) {
+					if(resVals[1] > 1.9999) {
 						document.getElementById("woodPickButton").hidden = false;
+						if(resVals[0] > 2.999) {
 						document.getElementById("woodPickButton").disabled = false;
+						}
+					}
+				}
+				if(!toolFlags[2]) {
+					if(resVals[2] > 2.9999) {
+						document.getElementById("stoneAxeButton").hidden = false;
+						if(resVals[1] > 1.9999) {
+						document.getElementById("stoneAxeButton").disabled = false;
+						}
+					}
+				}
+				if(!toolFlags[3]) {
+					if(resVals[2] > 2.9999) {
+						document.getElementById("stonePickButton").hidden = false;
+						if(resVals[1] > 1.9999) {
+						document.getElementById("stonePickButton").disabled = false;
+						}
 					}
 				}
 			}
 			
 			setInterval("update()",250);
 
-			async function punchTree() { //get 1
-				resVals[0] += clickMultis[0];				
+			function punchTree() { //get 1
+				resVals[0] += clickMultis[0];
 				document.getElementById("woodText").innerHTML = "You have " + resVals[0].toFixed(1) + " wood.";
 				document.getElementById("woodText").hidden = false;
 				document.getElementById("sticksButton").hidden = false;
 				
+			}
+			
+			function mineStone() {
+				resVals[2] += clickMultis[2];
+				document.getElementById("stoneText").innerHTML = "You have " + resVals[2].toFixed(1) + " stone.";
+				document.getElementById("stoneText").hidden = false;
 			}
 				
 			function craftSticks() { //get 2 use 1
@@ -55,14 +81,13 @@
 			function craftWoodAxe() {
 				document.getElementById("woodAxeButton").hidden = true;
 				toolFlags[0] = true;
-				clickMultis[0] = .5;
+				clickMultis[0] *= 5;
 				resVals[0] -= 3;
 				resVals[1] -= 2;
 				document.getElementById("woodText").innerHTML = "You have " + resVals[0].toFixed(1) + " wood.";
 				document.getElementById("sticksText").innerHTML = "You have " + resVals[1] + " sticks."; //toFixed later?
 				if(resVals[0] < 2.9999) {
 					document.getElementById("woodPickButton").disabled = true;
-					document.getElementById("woodAxeButton").disabled = true;
 					if(resVals[0] < 1.9999) {
 						document.getElementById("sticksButton").disabled = true;
 					}
@@ -72,13 +97,13 @@
 			
 			function craftWoodPick() {
 				document.getElementById("woodPickButton").hidden = true;
+				document.getElementById("stoneButton").hidden = false;
 				toolFlags[1] = true;
 				resVals[0] -= 3;
 				resVals[1] -= 2;
 				document.getElementById("woodText").innerHTML = "You have " + resVals[0].toFixed(1) + " wood.";
 				document.getElementById("sticksText").innerHTML = "You have " + resVals[1] + " sticks."; //toFixed later?
 				if(resVals[0] < 2.9999) {
-					document.getElementById("woodPickButton").disabled = true;
 					document.getElementById("woodAxeButton").disabled = true;
 					if(resVals[0] < 1.9999) {
 						document.getElementById("sticksButton").disabled = true;
@@ -86,21 +111,50 @@
 				}
 			}
 			
+			function craftStoneAxe() {
+				document.getElementById("stoneAxeButton").hidden = true;
+				toolFlags[2] = true;
+				clickMultis[0] *= 5;
+				resVals[2] -= 3;
+				resVals[1] -= 2;
+				document.getElementById("stoneText").innerHTML = "You have " + resVals[2].toFixed(1) + " stone.";
+				document.getElementById("sticksText").innerHTML = "You have " + resVals[1] + " sticks."; //toFixed later?
+				if(resVals[2] < 2.9999) {
+					document.getElementById("stonePickButton").disabled = true;
+				}
+			}
+			
+			function craftStonePick() {
+				document.getElementById("stonePickButton").hidden = true;
+				toolFlags[3] = true;
+				clickMultis[2] *= 5;
+				resVals[2] -= 3;
+				resVals[1] -= 2;
+				document.getElementById("stoneText").innerHTML = "You have " + resVals[2].toFixed(1) + " stone.";
+				document.getElementById("sticksText").innerHTML = "You have " + resVals[1] + " sticks."; //toFixed later?
+				if(resVals[2] < 2.9999) {
+					document.getElementById("stoneAxeButton").disabled = true;
+				}
+			}
 			
 			
 		</script>
 	</head>
 	<body>
-		<div>
-			<p id="woodText" hidden>You have 0 wood</p>
+		<div id="vals">
+			<p id="woodText" hidden>You have 0 wood</p> <!-- kinda don't need to hide these but only leave text empty, but then they'll take up vertical space maybe -->
 			<p id="sticksText" hidden>You have 0 sticks</p>
+			<p id="stoneText" hidden>You have 0 stone</p>
 		</div>
 		
-		<div>
+		<div id="buttons">
 			<input type="button" id="woodButton" value="Punch tree" onclick="punchTree()">
 			<input type="button" id="sticksButton" value="Craft sticks" onclick="craftSticks()" hidden disabled>
 			<input type="button" id="woodAxeButton" value="Craft wooden axe" onclick="craftWoodAxe()" hidden disabled>
 			<input type="button" id="woodPickButton" value="Craft wooden pickaxe" onclick="craftWoodPick()" hidden disabled>
+			<input type="button" id="stoneButton" value="Mine stone" onclick="mineStone()" hidden>
+			<input type="button" id="stoneAxeButton" value="Craft stone axe" onclick="craftStoneAxe()" hidden disabled>
+			<input type="button" id="stonePickButton" value="Craft stone pickaxe" onclick="craftStonePick()" hidden disabled>
 		</div>
 		
 		<script>
