@@ -5,7 +5,7 @@
 		<script>
 		
 			//const resNames = ["wood", "sticks", "stone"];
-			var resVals = [0,0,0];
+			var resVals = [0,0,0,0];
 			var clickMultis = [.1,1,.1];
 			var toolFlags = [false, false, false, false];
 			
@@ -61,6 +61,11 @@
 				resVals[2] += clickMultis[2];
 				document.getElementById("stoneText").innerHTML = "You have " + resVals[2].toFixed(1) + " stone.";
 				document.getElementById("stoneText").hidden = false;
+				if(Math.random()*20 + .1 < clickMultis[2]) { //will require reworking for very powerful tools
+					resVals[3] += 1;
+					document.getElementById("ironText").innerHTML = "You have " + resVals[3].toFixed(1) + " iron.";
+					document.getElementById("ironText").hidden = false;
+				}
 			}
 				
 			function craftSticks() { //get 2 use 1
@@ -145,6 +150,7 @@
 			<p id="woodText" hidden>You have 0 wood</p> <!-- kinda don't need to hide these but only leave text empty, but then they'll take up vertical space maybe -->
 			<p id="sticksText" hidden>You have 0 sticks</p>
 			<p id="stoneText" hidden>You have 0 stone</p>
+			<p id="ironText" hidden>You have 0 iron</p>
 		</div>
 		
 		<div id="buttons">
