@@ -6,8 +6,9 @@
 		
 			//const resNames = ["wood", "sticks", "stone", "iron", "redstone", "gold", "diamond"];
 			var resVals = [0,0,0,0,0,0,0];
-			var clickMultis = [.1,1,.1];
-			var toolFlags = [false, false, false, false, false, false];
+			var clickMultis = [.1,1,.1]; //wood, sticks, stone
+			var toolFlags = [false, false, false, false, false, false]; //wood axe, wood pick, stone axe, stone pick, iron axe, iron pick
+			var minionLevels = [0]; //stone
 			
 			function update() { //unlocks buttons, updates resource values
 				
@@ -70,6 +71,9 @@
 						}
 					}
 				}
+				if(resVals[2] > 80*Math.pow(4,minionLevels[0])-.0001 && resVals[4] > 10*Math.pow(3,minionLevels[0])-.0001) {
+					document.getElementById("stoneMinionButton").disabled = false;
+				}
 					
 			}
 			
@@ -94,9 +98,12 @@
 					}
 				}
 				if(resType == 2) {
-					if(resVals[2] < 2.999) {
-						document.getElementById("stoneAxeButton").disabled = true;
-						document.getElementById("stonePickButton").disabled = true;
+					if(resVals[2] < 80*Math.pow(4,minionLevels[0])-.0001) {
+						document.getElementById("stoneMinionButton").disabled = true;
+						if(resVals[2] < 2.999) {
+							document.getElementById("stoneAxeButton").disabled = true;
+							document.getElementById("stonePickButton").disabled = true;
+						}
 					}
 				}
 				if(resType == 3) {
@@ -105,9 +112,19 @@
 						document.getElementById("ironPickButton").disabled = true;
 					}
 				}
+				if(resType == 4) {
+					if(resVals[4] < 10*Math.pow(3,minionLevels[0])-.0001) {
+						document.getElementById("stoneMinionButton").disabled = true;
+					}
+				}
+			}
+			
+			function doMinions() {
+				resVals[2] += Math.pow(2,minionLevels[0])*minionLevels[0]; //0,2,8,24,64,160,384,...
 			}
 			
 			setInterval("update()",100); //framerate
+			setInterval("doMinions()",1000);
 
 			function punchTree() {
 				resVals[0] += clickMultis[0];
@@ -127,6 +144,7 @@
 				if(Math.random()*19.6 + .4 < clickMultis[2] % 20) {
 					resVals[4] += 1;
 					document.getElementById("redstoneText").hidden = false;
+					document.getElementById("stoneMinionButton").hidden = false;
 				}
 				resVals[4] += Math.floor(clickMultis[2]/20);
 				if(Math.random()*49.6 + .4 < clickMultis[2] % 50) {
@@ -208,6 +226,14 @@
 				disableUncraftable(3);
 			}
 
+			function buildStoneMinion() {
+				resVals[2] -= 80*Math.pow(4,minionLevels[0]);
+				resVals[4] -= 10*Math.pow(3,minionLevels[0]);
+				minionLevels[0]++;
+				document.getElementById("stoneMinionButton").value = "Upgrade stone minion";
+				disableUncraftable(2);
+				disableUncraftable(4);
+			}
 			
 		</script>
 	</head>
@@ -232,6 +258,7 @@
 			<input type="button" id="stonePickButton" value="Craft stone pickaxe" onclick="craftStonePick()" hidden disabled>
 			<input type="button" id="ironAxeButton" value="Craft iron axe" onclick="craftIronAxe()" hidden disabled>
 			<input type="button" id="ironPickButton" value="Craft iron pickaxe" onclick="craftIronPick()" hidden disabled>
+			<input type="button" id="stoneMinionButton" value="Build a stone minion" onclick="buildStoneMinion()" hidden disabled>
 		</div>
 
 	</body>
