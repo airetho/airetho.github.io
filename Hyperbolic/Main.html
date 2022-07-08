@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>definitely gonna be a hyperbolic project</title>
+</head>
+<body>
+	<canvas id="canvas" width="1000" height="1000" onclick = "clickf(event)" style="border: solid black">
+			Sorry - This page uses <code>canvas</code>, which your browser doesn't support.
+	</canvas>
+	
+	<script>
+		var canvas = document.getElementById("canvas");
+		canvas.addEventListener('keydown', btnPress);
+		var ctx = canvas.getContext("2d");
+		ctx.strokeStyle = "black";
+		
+		var xpos = 0.0;
+		var ypos = 0.0;
+		const SCALE = 200;
+		
+		var x1 = 0;
+		var y1 = 0;
+		var x2 = 0;
+		var y2 = 0;
+		
+		function drawHLine(x1, y1, x2, y2) {
+			if(Math.abs(x1*y2 - x2*y1) < .0001 ) { //does the HLine go through the center
+				ctx.moveTo(x1, y1);
+				ctx.lineTo(x2, y2);
+			}
+			var r2 = x1*x1+y1*y1; //r^2, x1 from center
+			var x3 = x1/r2; //everting (x1,y1) about the poincare disk to get a 3rd point
+			var y3 = y1/r2; //all divisions involved should be safe because of the if statement?
+			var a = x1-x2;
+			var b = y1-y2;
+			var c = x1-x3;
+			var d = y1-y3;
+			invDet = 1/(a*d-b*c); //matrix shenanigans
+			var e = r2-x2*x2-y2*y2;
+			var f = r2-x3*x3-y3*y3;
+			var centerx = (d*invDet*e - b*invDet*f)/2;
+			var centery = (a*invDet*f - c*invDet*e)/2;
+			var r = Math.sqrt((centerx-x1)*(centerx-x1)+(centery-y1)*(centery-y1));//radius of HLine on the disk
+			ctx.beginPath();
+			ctx.arc(centerx*SCALE + canvas.width/2, centery*SCALE + canvas.height/2, SCALE*r, 0, 2*Math.PI);
+			ctx.stroke();
+		}
+		
+		function btnPress() {
+		}
+		
+		function clickf(e) {
+			x2 = x1; y2 = y1;
+			x1 = (e.clientX - canvas.offsetLeft - canvas.width/2)/SCALE;
+			y1 = (e.clientY - canvas.offsetTop - canvas.height/2)/SCALE;
+		}
+		
+		function update() {
+		ctx.clearRect(0,0,1000,1000);
+		ctx.beginPath();
+		ctx.arc(canvas.width/2, canvas.height/2, SCALE, 0, 2*Math.PI);
+		ctx.stroke();
+		drawHLine(x1,y1,x2,y2);		
+		}
+		
+		myInterval = setInterval("update()",30);
+		
+	</script>
+	
+</body>
+</html>
