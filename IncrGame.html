@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>Harmonic incremental</title>
+</head>
+<body>
+
+	<div id="text">
+	</div>
+	<div id="buttons">
+	</div>
+	<div id="shop" style="background-color: grey" hidden>
+		<p>Shop</p>
+	</div>
+
+	<script>
+		myInterval = setInterval("update()", 1000);
+		let progress = 0; //tracks overall progress through the game
+		let resources = [];
+		let cps = [];
+		let clickNums = [];
+		let upgradePrices = [4];
+
+		function btn1Click(nclicks) {
+			if (progress == 1) {				
+				let txt = document.createElement('p');
+				txt.id = 'txt1';
+				document.getElementById("text").appendChild(txt);
+				clickNums.push(0);
+                progress++;
+			}
+			for (let i = 0; i < nclicks; i++) {
+				clickNums[0] += 1;
+				resources[0] += 1 / clickNums[0];
+				document.getElementById("txt1").innerHTML = "You have " + resources[0];
+			}
+		}
+
+		function buy(item) {
+			if (resources[0] >= upgradePrices[item]) { //doesn't generalize to prestige upgrades
+				if (item == 0) {
+					cps[0] += 1;
+                }
+				clickNums[0] = 0.
+				resources[0] = 0.
+                document.getElementById("txt1").innerHTML = "You have " + resources[0];
+			}
+        }
+
+		function update() {
+			if (progress > 2) {
+				btn1Click(cps[0]);
+			}
+			switch (progress) {
+				case 0:
+					let btn = document.createElement('button');
+					btn.id = "btn1";
+					btn.innerHTML = "Number";
+					btn.onclick = function () { btn1Click(1) }
+					document.getElementById("buttons").appendChild(btn);
+					resources.push(0.);
+					progress++;
+				case 2:
+					if (resources[0] > 3) {
+						let btn = document.createElement('button');
+                        //btn.disabled = true;
+						btn.id = "shop1";
+						btn.innerHTML = "Auto-click once a second | Cost: 4";
+						btn.onclick = function () { buy(0) }
+						cps.push(0);
+						document.getElementById("shop").hidden = false;
+						document.getElementById("shop").appendChild(btn);
+                        progress++;
+                    }
+
+            }
+		}
+
+
+	</script>
+</body>
+</html>
