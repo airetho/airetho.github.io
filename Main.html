@@ -5,109 +5,162 @@
 		<link rel="stylesheet" type="text/css" href="./oppaMinecraftStyle.css" />
 		<script>
 		
-			//const resNames = ["wood", "sticks", "stone", "iron", "redstone", 5: "gold", "diamond", "obsidian"];
-			var resVals = [0,0,0,0,0,0,0,0];
-			var clickMultis = [.1,1,.1]; //wood, sticks, stone
-			var toolFlags = [false, false, false, false, false, false, false, false]; //wood axe, wood pick, stone axe, stone pick, iron axe, 5: iron pick, diamond axe, diamond pick
-			var minionLevels = [0]; //stone
+			let resVals = {
+				wood: 0.001,
+				sticks: 0,
+				stone: 0.001,
+				iron: 0,
+				redstone: 0,
+				gold: 0,
+				diamond: 0,
+				obsidian: 0.001,
+				xp: 0.001
+			}
+			let clickMultis = {
+				cut: .1,
+				mine: .1
+            }
+			let toolFlags = {
+				woodaxe: false,
+				woodpick: false,
+				stoneaxe: false,
+				stonepick: false,
+				ironaxe: false,
+				ironpick: false,
+				diamondaxe: false,
+				diamondpick: false,
+				enchtable: false,
+            }
+			var minionLevels = {
+				stone: 0
+			}
+
+			function XPtoL(xp) {
+				if (xp <= 352) {
+					return -3 + Math.sqrt(xp + 9);
+				} else if (xp <= 1507) {
+					return 81 / 10 + Math.sqrt(2 / 5 * (xp - 7839 / 40));
+				} else {
+					return 325 / 18 + Math.sqrt(2 / 9 * (xp - 54215 / 72));
+                }
+			}
+
+			function LtoXP(L) {
+				if (L <= 16) {
+					return L * L + 6 * L;
+				} else if (L <= 31) {
+					return 2.5 * L * L - 40.5 * L + 360;
+				} else {
+					return 4.5 * L * L - 162.5 * L + 2220;
+                }
+            }
 			
 			function update() { //unlocks buttons, updates resource values
 				
-				document.getElementById("woodText").innerHTML = "You have " + resVals[0].toFixed(1) + " wood.";
-				document.getElementById("sticksText").innerHTML = "You have " + resVals[1] + " sticks.";
-				document.getElementById("stoneText").innerHTML = "You have " + resVals[2].toFixed(1) + " stone.";
-				document.getElementById("ironText").innerHTML = "You have " + resVals[3] + " iron.";
-				document.getElementById("redstoneText").innerHTML = "You have " + resVals[4] + " redstone.";
-				document.getElementById("goldText").innerHTML = "You have " + resVals[5] + " gold.";
-				document.getElementById("diamondText").innerHTML = "You have " + resVals[6] + " diamond.";
-                document.getElementById("obsidianText").innerHTML = "You have " + resVals[7].toFixed(2) + " obsidian.";
-				
-				if(resVals[0] > 1.9999) {
+				document.getElementById("woodText").innerHTML = "You have " + resVals.wood.toFixed(1) + " wood.";
+				document.getElementById("sticksText").innerHTML = "You have " + resVals.sticks + " sticks.";
+				document.getElementById("stoneText").innerHTML = "You have " + resVals.stone.toFixed(1) + " stone.";
+				document.getElementById("ironText").innerHTML = "You have " + resVals.iron + " iron.";
+				document.getElementById("redstoneText").innerHTML = "You have " + resVals.redstone + " redstone.";
+				document.getElementById("goldText").innerHTML = "You have " + resVals.gold + " gold.";
+				document.getElementById("diamondText").innerHTML = "You have " + resVals.diamond + " diamond.";
+				document.getElementById("obsidianText").innerHTML = "You have " + resVals.obsidian.toFixed(2) + " obsidian.";
+                document.getElementById("levelText").innerHTML = "You are level " + Math.floor(XPtoL(resVals.xp));
+
+				if (resVals.wood >= 2) {
 					document.getElementById("sticksButton").disabled = false;
 				}
-				if(!toolFlags[0]) {
-					if(resVals[1] > 1.9999) {
+				if (!toolFlags.woodaxe) {
+					if (resVals.sticks >= 2) {
 						document.getElementById("woodAxeButton").hidden = false;
-						if(resVals[0] > 2.999) {
+						if(resVals.wood >= 3) {
 							document.getElementById("woodAxeButton").disabled = false;
 						}
 					}
 				}
-				if(!toolFlags[1]) {
-					if(resVals[1] > 1.9999) {
+				if(!toolFlags.woodpick) {
+					if(resVals.sticks >= 2) {
 						document.getElementById("woodPickButton").hidden = false;
-						if(resVals[0] > 2.999) {
+						if(resVals.wood >= 3) {
 							document.getElementById("woodPickButton").disabled = false;
 						}
 					}
 				}
-				if(!toolFlags[2]) {
-					if(resVals[2] > 2.9999) {
+				if(!toolFlags.stoneaxe) {
+					if(resVals.stone >= 3) {
 						document.getElementById("stoneAxeButton").hidden = false;
-						if(resVals[1] > 1.9999) {
+						if(resVals.sticks >= 2) {
 							document.getElementById("stoneAxeButton").disabled = false;
 						}
 					}
 				}
-				if(!toolFlags[3]) {
-					if(resVals[2] > 2.9999) {
+                if (!toolFlags.stonepick) {
+					if(resVals.stone >= 3) {
 						document.getElementById("stonePickButton").hidden = false;
-						if(resVals[1] > 1.9999) {
+						if(resVals.sticks >= 2) {
 							document.getElementById("stonePickButton").disabled = false;
 						}
 					}
 				}
-				if(!toolFlags[4]) {
-					if(resVals[3] > 2.9999) {
+				if(!toolFlags.ironaxe) {
+					if(resVals.iron >= 3) {
 						document.getElementById("ironAxeButton").hidden = false;
-						if(resVals[1] > 1.9999) {
+						if(resVals.sticks >= 2) {
 							document.getElementById("ironAxeButton").disabled = false;
 						}
 					}
 				}
-				if(!toolFlags[5]) {
-					if(resVals[3] > 2.9999) {
+				if(!toolFlags.ironpick) {
+					if(resVals.iron >= 3) {
 						document.getElementById("ironPickButton").hidden = false;
-						if(resVals[1] > 1.9999) {
+						if(resVals.sticks >= 2) {
 							document.getElementById("ironPickButton").disabled = false;
 						}
 					}
 				}
 				
-                if (!toolFlags[6]) {
-                    if (resVals[6] > 2.9999) {
+                if (!toolFlags.diamondaxe) {
+                    if (resVals.diamond >= 3) {
                         document.getElementById("diamondAxeButton").hidden = false;
-                        if (resVals[1] > 1.9999) {
+                        if (resVals.sticks >= 2) {
                             document.getElementById("diamondAxeButton").disabled = false;
                         }
                     }
                 }
-                if (!toolFlags[7]) {
-                    if (resVals[6] > 2.9999) {
+                if (!toolFlags.diamondpick) {
+                    if (resVals.diamond >= 3) {
                         document.getElementById("diamondPickButton").hidden = false;
-                        if (resVals[1] > 1.9999) {
+                        if (resVals.sticks >= 2) {
                             document.getElementById("diamondPickButton").disabled = false;
                         }
                     }
 				}
+				if (!toolFlags.enchtable) {
+					if (resVals.obsidian >= 1) {
+						document.getElementById("enchTableButton").hidden = false;
+						if (resVals.obsidian >= 4 && resVals.diamond >= 2) {
+                            document.getElementById("enchTableButton").disabled = false;
+                        }
+                    }
+                }
 
-                if (resVals[2] > 80 * Math.pow(4, minionLevels[0]) - .0001 && resVals[4] > 10 * Math.pow(3, minionLevels[0]) - .0001) {
+                if (resVals.stone >= 80 * Math.pow(4, minionLevels.stone) && resVals.redstone >= 10 * Math.pow(3, minionLevels.stone)) {
                     document.getElementById("stoneMinionButton").disabled = false;
                 }
 			}
 			
 			function disableUncraftable(resType) {
 				if(resType == 0) {
-					if(resVals[0] < 2.999) {
+					if(resVals.wood < 3) {
 						document.getElementById("woodAxeButton").disabled = true;
 						document.getElementById("woodPickButton").disabled = true;
-						if(resVals[0] < 1.999) {
+						if(resVals.wood < 2) {
 							document.getElementById("sticksButton").disabled = true;
 						}
 					}
 				}
 				if(resType == 1) {
-					if(resVals[1] < 1.999) {
+					if(resVals.sticks < 3) {
 						document.getElementById("woodAxeButton").disabled = true;
 						document.getElementById("woodPickButton").disabled = true;
 						document.getElementById("stoneAxeButton").disabled = true;
@@ -119,93 +172,95 @@
 					}
 				}
 				if(resType == 2) {
-					if(resVals[2] < 80*Math.pow(4,minionLevels[0])-.0001) {
+					if(resVals.stone < 80*Math.pow(4,minionLevels.stone)-.0001) {
 						document.getElementById("stoneMinionButton").disabled = true;
-						if(resVals[2] < 2.999) {
+						if(resVals.stone < 3) {
 							document.getElementById("stoneAxeButton").disabled = true;
 							document.getElementById("stonePickButton").disabled = true;
 						}
 					}
 				}
 				if(resType == 3) {
-					if(resVals[3] < 2.999) {
+					if(resVals.iron < 3) {
 						document.getElementById("ironAxeButton").disabled = true;
 						document.getElementById("ironPickButton").disabled = true;
 					}
 				}
 				if(resType == 4) {
-					if(resVals[4] < 10*Math.pow(3,minionLevels[0])-.0001) {
+					if(resVals.redstone < 10*Math.pow(3,minionLevels.stone)) {
 						document.getElementById("stoneMinionButton").disabled = true;
 					}
 				}
 				if (resType == 6) {
-					if (resVals[6] < 2.999) {
+					if (resVals.diamond < 3) {
 						document.getElementById("diamondAxeButton").disabled = true;
 						document.getElementById("diamondPickButton").disabled = true;
+						if (resVals.diamond < 2) {
+							document.getElementById("enchTableButton").disabled = true;
+                        }
                     }
-                }
+				}
 			}
 			
 			function doMinions() {
-				resVals[2] += Math.pow(2,minionLevels[0])*minionLevels[0]; //0,2,8,24,64,160,384,...
+				resVals.stone += Math.pow(2,minionLevels.stone)*minionLevels.stone; //0,2,8,24,64,160,384,...
 			}
 			
 			setInterval("update()",100); //framerate
 			setInterval("doMinions()",1000);
 
 			function punchTree() {
-				resVals[0] += clickMultis[0];
+				resVals.wood += clickMultis.cut;
 				document.getElementById("woodText").hidden = false;
 				document.getElementById("sticksButton").hidden = false;
 				
 			}
 			
 			function mineStone() {
-				resVals[2] += clickMultis[2];
+				resVals.stone += clickMultis.mine;
+				resVals.xp += clickMultis.mine / 10;
 				document.getElementById("stoneText").hidden = false;
-				if(Math.random()*9.9 + .1 < clickMultis[2] % 10) { //technically not perfectly smoothly linear
-					resVals[3] += 1;
+				if(Math.random()*9.9 + .1 < clickMultis.mine % 10) { //technically not perfectly smoothly linear
+					resVals.iron += 1;
 					document.getElementById("ironText").hidden = false;
 				}
-				resVals[3] += Math.floor(clickMultis[2]/10);
-				if(Math.random()*19.6 + .4 < clickMultis[2] % 20) {
-					resVals[4] += 1;
+				resVals.iron += Math.floor(clickMultis.mine/10);
+				if(Math.random()*19.6 + .4 < clickMultis.mine % 20) {
+					resVals.redstone += 1;
 					document.getElementById("redstoneText").hidden = false;
 					document.getElementById("stoneMinionButton").hidden = false;
 				}
-				resVals[4] += Math.floor(clickMultis[2]/20);
-				if(Math.random()*49.6 + .4 < clickMultis[2] % 50) {
-					resVals[5] += 1;
+				resVals.redstone += Math.floor(clickMultis.mine/20);
+				if(Math.random()*49.6 + .4 < clickMultis.mine % 50) {
+					resVals.gold += 1;
 					document.getElementById("goldText").hidden = false;
 				}
-				resVals[5] += Math.floor(clickMultis[2]/50);
-				if(Math.random()*99.6 + .4 < clickMultis[2] % 100) {
-					resVals[6] += 1;
+				resVals.gold += Math.floor(clickMultis.mine/50);
+				if(Math.random()*99.6 + .4 < clickMultis.mine % 100) {
+					resVals.diamond += 1;
 					document.getElementById("diamondText").hidden = false;
 				}
-				resVals[6] += Math.floor(clickMultis[2]/100);
+				resVals.diamond += Math.floor(clickMultis.mine/100);
 			}
 
             function mineObsidian() {
-                resVals[7] += clickMultis[2]/200;
+                resVals.obsidian += clickMultis.mine/200;
                 document.getElementById("obsidianText").hidden = false;
-                //document.getElementById("sticksButton").hidden = false;
-
             }
 				
 			function craftSticks() { //get 2 use 1
-				resVals[1] += 4;
-				resVals[0] -= 2;
+				resVals.sticks += 4;
+				resVals.wood -= 2;
 				document.getElementById("sticksText").hidden = false;
 				disableUncraftable(0);
 			}
 			
 			function craftWoodAxe() {
 				document.getElementById("woodAxeButton").hidden = true;
-				toolFlags[0] = true;
-				clickMultis[0] *= 5;
-				resVals[0] -= 3;
-				resVals[1] -= 2;
+				toolFlags.woodaxe = true;
+				clickMultis.cut *= 5;
+				resVals.wood -= 3;
+				resVals.sticks -= 2;
 				disableUncraftable(0);
 				disableUncraftable(1);
 			}
@@ -213,59 +268,59 @@
 			function craftWoodPick() {
 				document.getElementById("woodPickButton").hidden = true;
 				document.getElementById("stoneButton").hidden = false;
-				toolFlags[1] = true;
-				resVals[0] -= 3;
-				resVals[1] -= 2;
+				toolFlags.woodpick = true;
+				resVals.wood -= 3;
+				resVals.sticks -= 2;
 				disableUncraftable(0);
 				disableUncraftable(1);
 			}
 			
 			function craftStoneAxe() {
 				document.getElementById("stoneAxeButton").hidden = true;
-				toolFlags[2] = true;
-				clickMultis[0] *= 4;
-				resVals[2] -= 3;
-				resVals[1] -= 2;
+				toolFlags.stoneaxe = true;
+				clickMultis.cut *= 4;
+				resVals.stone -= 3;
+				resVals.sticks -= 2;
 				disableUncraftable(1);
 				disableUncraftable(2);
 			}
 			
 			function craftStonePick() {
 				document.getElementById("stonePickButton").hidden = true;
-				toolFlags[3] = true;
-				clickMultis[2] *= 4;
-				resVals[2] -= 3;
-				resVals[1] -= 2;
+                toolFlags.stonepick = true;
+				clickMultis.mine *= 4;
+				resVals.stone -= 3;
+				resVals.sticks -= 2;
 				disableUncraftable(1);
 				disableUncraftable(2);
 			}
 			
 			function craftIronAxe() {
 				document.getElementById("ironAxeButton").hidden = true;
-				toolFlags[4] = true;
-				clickMultis[0] *= 5;
-				resVals[3] -= 3;
-				resVals[1] -= 2;
+                toolFlags.ironaxe = true;
+				clickMultis.cut *= 5;
+				resVals.iron -= 3;
+				resVals.sticks -= 2;
 				disableUncraftable(1);
 				disableUncraftable(3);
 			}
 			
 			function craftIronPick() {
 				document.getElementById("ironPickButton").hidden = true;
-				toolFlags[5] = true;
-				clickMultis[2] *= 5;
-				resVals[3] -= 3;
-				resVals[1] -= 2;
+                toolFlags.ironpick = true;
+				clickMultis.mine *= 5;
+				resVals.iron -= 3;
+				resVals.sticks -= 2;
 				disableUncraftable(1);
 				disableUncraftable(3);
 			}
 
             function craftDiamondAxe() {
                 document.getElementById("diamondAxeButton").hidden = true;
-                toolFlags[6] = true;
-                clickMultis[0] *= 5;
-                resVals[6] -= 3;
-                resVals[1] -= 2;
+                toolFlags.diamondaxe = true;
+                clickMultis.cut *= 5;
+                resVals.diamond -= 3;
+                resVals.sticks -= 2;
                 disableUncraftable(1);
                 disableUncraftable(6);
             }
@@ -273,22 +328,32 @@
             function craftDiamondPick() {
 				document.getElementById("diamondPickButton").hidden = true;
 				document.getElementById("obsidianButton").hidden = false;
-                toolFlags[7] = true;
-                clickMultis[2] *= 5;
-                resVals[6] -= 3;
-                resVals[1] -= 2;
+                toolFlags.diamondpick = true;
+                clickMultis.mine *= 5;
+                resVals.diamond -= 3;
+                resVals.sticks -= 2;
                 disableUncraftable(1);
                 disableUncraftable(6);
             }
 
 			function buildStoneMinion() {
-				resVals[2] -= 80*Math.pow(4,minionLevels[0]);
-				resVals[4] -= 10*Math.pow(3,minionLevels[0]);
-				minionLevels[0]++;
-				document.getElementById("stoneMinionButton").value = "Upgrade stone minion";
+                document.getElementById("stoneMinionButton").value = "Upgrade stone minion";
+				resVals.stone -= 80*Math.pow(4,minionLevels.stone);
+				resVals.redstone -= 10*Math.pow(3,minionLevels.stone);
+				minionLevels.stone++;
 				disableUncraftable(2);
 				disableUncraftable(4);
 			}
+
+			function craftEnchTable() {
+				document.getElementById("enchTableButton").hidden = true;
+				document.getElementById("levelText").hidden = false;
+				toolFlags.enchtable = true;
+				resVals.diamond -= 2;
+				resVals.obsidian -= 4;
+                disableUncraftable(6);
+                disableUncraftable(7);
+            }
 			
 		</script>
 	</head>
@@ -302,6 +367,7 @@
 			<p id="goldText" hidden class="gold">You have 0 gold</p>
 			<p id="diamondText" hidden class="diamond">You have 0 diamonds</p>
 			<p id="obsidianText" hidden class="obsidian">You have 0 obsidian</p>
+			<p id="levelText" hidden class="xp">You are level 0</p>
 		</div>
 		<br />
 		<div id="buttons">
@@ -318,7 +384,11 @@
 			<input type="button" id="diamondPickButton" value="Craft diamond pickaxe" onclick="craftDiamondPick()" hidden disabled class="diamond">
 			<input type="button" id="stoneMinionButton" value="Build a stone minion" onclick="buildStoneMinion()" hidden disabled class="stone">
 			<input type="button" id="obsidianButton" value="Mine obsidian" onclick="mineObsidian()" hidden class="obsidian">
+			<input type="button" id="enchTableButton" value="Craft enchantment table" onclick="craftEnchTable()" hidden disabled class="obsidian">
 		</div>
-
+		<div id="enchTable" style="background-color:mediumpurple" hidden>
+			<input type="button" id="pickEff" value="6 Levels: Efficiency I Diamond Pickaxe" class="xp" disabled />
+			<input type="button" id="axeEff" value="6 Levels: Efficiency I Diamond Axe" class="xp" disabled />
+		</div>
 	</body>
 </html>
