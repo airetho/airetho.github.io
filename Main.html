@@ -2,12 +2,13 @@
 <html>
 	<head>
 		<title>Minecraft 2</title>
+		<link rel="stylesheet" type="text/css" href="./oppaMinecraftStyle.css" />
 		<script>
 		
-			//const resNames = ["wood", "sticks", "stone", "iron", "redstone", "gold", "diamond"];
-			var resVals = [0,0,0,0,0,0,0];
+			//const resNames = ["wood", "sticks", "stone", "iron", "redstone", 5: "gold", "diamond", "obsidian"];
+			var resVals = [0,0,0,0,0,0,0,0];
 			var clickMultis = [.1,1,.1]; //wood, sticks, stone
-			var toolFlags = [false, false, false, false, false, false]; //wood axe, wood pick, stone axe, stone pick, iron axe, iron pick
+			var toolFlags = [false, false, false, false, false, false, false, false]; //wood axe, wood pick, stone axe, stone pick, iron axe, 5: iron pick, diamond axe, diamond pick
 			var minionLevels = [0]; //stone
 			
 			function update() { //unlocks buttons, updates resource values
@@ -19,6 +20,7 @@
 				document.getElementById("redstoneText").innerHTML = "You have " + resVals[4] + " redstone.";
 				document.getElementById("goldText").innerHTML = "You have " + resVals[5] + " gold.";
 				document.getElementById("diamondText").innerHTML = "You have " + resVals[6] + " diamond.";
+                document.getElementById("obsidianText").innerHTML = "You have " + resVals[7].toFixed(2) + " obsidian.";
 				
 				if(resVals[0] > 1.9999) {
 					document.getElementById("sticksButton").disabled = false;
@@ -71,10 +73,27 @@
 						}
 					}
 				}
-				if(resVals[2] > 80*Math.pow(4,minionLevels[0])-.0001 && resVals[4] > 10*Math.pow(3,minionLevels[0])-.0001) {
-					document.getElementById("stoneMinionButton").disabled = false;
+				
+                if (!toolFlags[6]) {
+                    if (resVals[6] > 2.9999) {
+                        document.getElementById("diamondAxeButton").hidden = false;
+                        if (resVals[1] > 1.9999) {
+                            document.getElementById("diamondAxeButton").disabled = false;
+                        }
+                    }
+                }
+                if (!toolFlags[7]) {
+                    if (resVals[6] > 2.9999) {
+                        document.getElementById("diamondPickButton").hidden = false;
+                        if (resVals[1] > 1.9999) {
+                            document.getElementById("diamondPickButton").disabled = false;
+                        }
+                    }
 				}
-					
+
+                if (resVals[2] > 80 * Math.pow(4, minionLevels[0]) - .0001 && resVals[4] > 10 * Math.pow(3, minionLevels[0]) - .0001) {
+                    document.getElementById("stoneMinionButton").disabled = false;
+                }
 			}
 			
 			function disableUncraftable(resType) {
@@ -95,6 +114,8 @@
 						document.getElementById("stonePickButton").disabled = true;
 						document.getElementById("ironAxeButton").disabled = true;
 						document.getElementById("ironPickButton").disabled = true;
+                        document.getElementById("diamondAxeButton").disabled = true;
+                        document.getElementById("diamondPickButton").disabled = true;
 					}
 				}
 				if(resType == 2) {
@@ -117,6 +138,12 @@
 						document.getElementById("stoneMinionButton").disabled = true;
 					}
 				}
+				if (resType == 6) {
+					if (resVals[6] < 2.999) {
+						document.getElementById("diamondAxeButton").disabled = true;
+						document.getElementById("diamondPickButton").disabled = true;
+                    }
+                }
 			}
 			
 			function doMinions() {
@@ -158,6 +185,13 @@
 				}
 				resVals[6] += Math.floor(clickMultis[2]/100);
 			}
+
+            function mineObsidian() {
+                resVals[7] += clickMultis[2]/200;
+                document.getElementById("obsidianText").hidden = false;
+                //document.getElementById("sticksButton").hidden = false;
+
+            }
 				
 			function craftSticks() { //get 2 use 1
 				resVals[1] += 4;
@@ -226,6 +260,27 @@
 				disableUncraftable(3);
 			}
 
+            function craftDiamondAxe() {
+                document.getElementById("diamondAxeButton").hidden = true;
+                toolFlags[6] = true;
+                clickMultis[0] *= 5;
+                resVals[6] -= 3;
+                resVals[1] -= 2;
+                disableUncraftable(1);
+                disableUncraftable(6);
+            }
+
+            function craftDiamondPick() {
+				document.getElementById("diamondPickButton").hidden = true;
+				document.getElementById("obsidianButton").hidden = false;
+                toolFlags[7] = true;
+                clickMultis[2] *= 5;
+                resVals[6] -= 3;
+                resVals[1] -= 2;
+                disableUncraftable(1);
+                disableUncraftable(6);
+            }
+
 			function buildStoneMinion() {
 				resVals[2] -= 80*Math.pow(4,minionLevels[0]);
 				resVals[4] -= 10*Math.pow(3,minionLevels[0]);
@@ -233,34 +288,36 @@
 				document.getElementById("stoneMinionButton").value = "Upgrade stone minion";
 				disableUncraftable(2);
 				disableUncraftable(4);
-				document.body.style.backgroundImage = "url('god.jpg')";
-				document.body.style.backgroundSize = "100%";
 			}
 			
 		</script>
 	</head>
 	<body>
 		<div id="vals">
-			<p id="woodText" hidden>You have 0 wood</p> <!-- kinda don't need to hide these but only leave text empty, but then they'll take up vertical space maybe -->
-			<p id="sticksText" hidden>You have 0 sticks</p>
-			<p id="stoneText" hidden>You have 0 stone</p>
-			<p id="ironText" hidden>You have 0 iron</p>
-			<p id="redstoneText" hidden>You have 0 redstone</p>
-			<p id="goldText" hidden>You have 0 gold</p>
-			<p id="diamondText" hidden>You have 0 diamonds</p>
+			<p id="woodText" hidden class="wood">You have 0 wood</p> <!-- kinda don't need to hide these but only leave text empty, but then they'll take up vertical space maybe -->
+			<p id="sticksText" hidden class="wood">You have 0 sticks</p>
+			<p id="stoneText" hidden class="stone">You have 0 stone</p>
+			<p id="ironText" hidden class="iron">You have 0 iron</p>
+			<p id="redstoneText" hidden class="redstone">You have 0 redstone</p>
+			<p id="goldText" hidden class="gold">You have 0 gold</p>
+			<p id="diamondText" hidden class="diamond">You have 0 diamonds</p>
+			<p id="obsidianText" hidden class="obsidian">You have 0 obsidian</p>
 		</div>
-		
+		<br />
 		<div id="buttons">
-			<input type="button" id="woodButton" value="Punch tree" onclick="punchTree()">
-			<input type="button" id="sticksButton" value="Craft sticks" onclick="craftSticks()" hidden disabled>
-			<input type="button" id="woodAxeButton" value="Craft wooden axe" onclick="craftWoodAxe()" hidden disabled>
-			<input type="button" id="woodPickButton" value="Craft wooden pickaxe" onclick="craftWoodPick()" hidden disabled>
-			<input type="button" id="stoneButton" value="Mine stone" onclick="mineStone()" hidden>
-			<input type="button" id="stoneAxeButton" value="Craft stone axe" onclick="craftStoneAxe()" hidden disabled>
-			<input type="button" id="stonePickButton" value="Craft stone pickaxe" onclick="craftStonePick()" hidden disabled>
-			<input type="button" id="ironAxeButton" value="Craft iron axe" onclick="craftIronAxe()" hidden disabled>
-			<input type="button" id="ironPickButton" value="Craft iron pickaxe" onclick="craftIronPick()" hidden disabled>
-			<input type="button" id="stoneMinionButton" value="Build a stone minion" onclick="buildStoneMinion()" hidden disabled>
+			<input type="button" id="woodButton" value="Punch tree" onclick="punchTree()" class="wood">
+			<input type="button" id="sticksButton" value="Craft sticks" onclick="craftSticks()" hidden disabled class="wood">
+			<input type="button" id="woodAxeButton" value="Craft wooden axe" onclick="craftWoodAxe()" hidden disabled class="wood">
+			<input type="button" id="woodPickButton" value="Craft wooden pickaxe" onclick="craftWoodPick()" hidden disabled class="wood">
+			<input type="button" id="stoneButton" value="Mine stone" onclick="mineStone()" hidden class="stone">
+			<input type="button" id="stoneAxeButton" value="Craft stone axe" onclick="craftStoneAxe()" hidden disabled class="stone">
+			<input type="button" id="stonePickButton" value="Craft stone pickaxe" onclick="craftStonePick()" hidden disabled class="stone">
+			<input type="button" id="ironAxeButton" value="Craft iron axe" onclick="craftIronAxe()" hidden disabled class="iron">
+			<input type="button" id="ironPickButton" value="Craft iron pickaxe" onclick="craftIronPick()" hidden disabled class="iron">
+			<input type="button" id="diamondAxeButton" value="Craft diamond axe" onclick="craftDiamondAxe()" hidden disabled class="diamond">
+			<input type="button" id="diamondPickButton" value="Craft diamond pickaxe" onclick="craftDiamondPick()" hidden disabled class="diamond">
+			<input type="button" id="stoneMinionButton" value="Build a stone minion" onclick="buildStoneMinion()" hidden disabled class="stone">
+			<input type="button" id="obsidianButton" value="Mine obsidian" onclick="mineObsidian()" hidden class="obsidian">
 		</div>
 
 	</body>
