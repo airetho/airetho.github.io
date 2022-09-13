@@ -1,0 +1,36 @@
+p {
+	padding: 6px;
+	margin: 0px;
+}
+
+.wood {
+	background-color: saddlebrown;
+	color: white;
+}
+
+.stone {
+	background-color: lightgrey;
+}
+
+.iron {
+	background-color: ivory;
+}
+
+.redstone {
+	background-color: darkred;
+	color: white;
+}
+
+.gold {
+	background-color: goldenrod;
+	color: white;
+}
+
+.diamond {
+	background-color: deepskyblue;
+}
+
+.obsidian {
+	background-color: black;
+	color: white;
+}
