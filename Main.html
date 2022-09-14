@@ -14,7 +14,8 @@
 				gold: 0,
 				diamond: 0,
 				obsidian: 0.001,
-				xp: 0.001
+				xp: 0.001,
+				level: 0
 			}
 			let clickMultis = {
 				cut: .1,
@@ -30,6 +31,8 @@
 				diamondaxe: false,
 				diamondpick: false,
 				enchtable: false,
+				axeEff: 0,
+				pickEff: 0
             }
 			var minionLevels = {
 				stone: 0
@@ -53,10 +56,21 @@
 				} else {
 					return 4.5 * L * L - 162.5 * L + 2220;
                 }
+			}
+
+			function toRoman(n) { //improve later
+				switch (n) {
+					case 1: return "I"
+					case 2: return "II"
+					case 3: return "III"
+					case 4: return "IV"
+					case 5: return "V"
+                }
             }
 			
 			function update() { //unlocks buttons, updates resource values
-				
+
+				resVals.level = XPtoL(resVals.xp);
 				document.getElementById("woodText").innerHTML = "You have " + resVals.wood.toFixed(1) + " wood.";
 				document.getElementById("sticksText").innerHTML = "You have " + resVals.sticks + " sticks.";
 				document.getElementById("stoneText").innerHTML = "You have " + resVals.stone.toFixed(1) + " stone.";
@@ -65,7 +79,7 @@
 				document.getElementById("goldText").innerHTML = "You have " + resVals.gold + " gold.";
 				document.getElementById("diamondText").innerHTML = "You have " + resVals.diamond + " diamond.";
 				document.getElementById("obsidianText").innerHTML = "You have " + resVals.obsidian.toFixed(2) + " obsidian.";
-                document.getElementById("levelText").innerHTML = "You are level " + Math.floor(XPtoL(resVals.xp));
+				document.getElementById("levelText").innerHTML = "You are level " + Math.floor(resVals.level);
 
 				if (resVals.wood >= 2) {
 					document.getElementById("sticksButton").disabled = false;
@@ -146,6 +160,13 @@
 
                 if (resVals.stone >= 80 * Math.pow(4, minionLevels.stone) && resVals.redstone >= 10 * Math.pow(3, minionLevels.stone)) {
                     document.getElementById("stoneMinionButton").disabled = false;
+				}
+
+				if (resVals.level >= 10 * (toolFlags.axeEff + 1)) {
+					document.getElementById("axeEff").disabled = false;
+				}
+                if (resVals.level >= 10 * (toolFlags.pickEff + 1)) {
+                    document.getElementById("pickEff").disabled = false;
                 }
 			}
 			
@@ -200,6 +221,12 @@
                         }
                     }
 				}
+				if (resType == 8) {
+					if (resVals.level < 10 * (toolFlags.axeEff + 1))
+						document.getElementById("axeEff").disabled = true;
+                    if (resVals.level < 10 * (toolFlags.pickEff) + 1)
+                        document.getElementById("pickEff").disabled = true;
+                }
 			}
 			
 			function doMinions() {
@@ -348,11 +375,36 @@
 			function craftEnchTable() {
 				document.getElementById("enchTableButton").hidden = true;
 				document.getElementById("levelText").hidden = false;
+				document.getElementById("enchTable").hidden = false;
 				toolFlags.enchtable = true;
 				resVals.diamond -= 2;
 				resVals.obsidian -= 4;
                 disableUncraftable(6);
                 disableUncraftable(7);
+			}
+
+			function enchAxe() {
+				toolFlags.axeEff++;
+				resVals.level -= 10 * toolFlags.axeEff; //this can be easily changed to steal xp instead of levels as a convenience upgrade
+				if (toolFlags.axeEff == 5) {
+					document.getElementById("axeEff").hidden = true;
+				}
+				document.getElementById("axeEff").value = 10 * (toolFlags.axeEff + 1) + " Levels: Efficiency " + toRoman(toolFlags.axeEff + 1) + " Diamond Axe";
+				disableUncraftable(8); //fix to strings
+                resVals.xp = LtoXP(resVals.level);
+				clickMultis.cut *= 2;
+			}
+
+            function enchPick() {
+                toolFlags.pickEff++;
+                resVals.level -= 10 * toolFlags.pickEff;
+                if (toolFlags.pickEff == 5) {
+					document.getElementById("pickEff").hidden = true;
+				}
+                document.getElementById("pickEff").value = 10 * (toolFlags.pickEff + 1) + " Levels: Efficiency " + toRoman(toolFlags.pickEff + 1) + " Diamond Pickaxe";
+                disableUncraftable(8);
+                resVals.xp = LtoXP(resVals.level);
+                clickMultis.mine *= 2;
             }
 			
 		</script>
@@ -386,9 +438,10 @@
 			<input type="button" id="obsidianButton" value="Mine obsidian" onclick="mineObsidian()" hidden class="obsidian">
 			<input type="button" id="enchTableButton" value="Craft enchantment table" onclick="craftEnchTable()" hidden disabled class="obsidian">
 		</div>
+		<br />
 		<div id="enchTable" style="background-color:mediumpurple" hidden>
-			<input type="button" id="pickEff" value="6 Levels: Efficiency I Diamond Pickaxe" class="xp" disabled />
-			<input type="button" id="axeEff" value="6 Levels: Efficiency I Diamond Axe" class="xp" disabled />
+			<input type="button" id="pickEff" value="10 Levels: Efficiency I Diamond Pickaxe" onclick="enchPick()" class="xp" disabled />
+			<input type="button" id="axeEff" value="10 Levels: Efficiency I Diamond Axe" onclick="enchAxe()" class="xp" disabled />
 		</div>
 	</body>
 </html>
