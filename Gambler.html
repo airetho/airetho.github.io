@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+
+    </head>
+
+    <body>
+        <p id="p">p = 0.25</p>
+
+        <button onclick="gamble()">
+            Flip a coin
+        </button>
+
+        <p id="stake">Amount at stake: $0.001</p>
+
+        <button id="cashin" onclick="cashin()">
+            Cash in
+        </button>
+
+        <p id="money">Money: $0</p>
+
+        <h1>Upgrades:</h1>
+
+        <button onclick="upgrade(0)">
+            p = p + .01
+        </button>
+        <div id="cost0">Cost: $0.01</div>
+
+        <script>
+            let p = 0.25;
+            let money = 0;
+            let stake = 1;
+
+            let upgrade_costs = [10];
+
+            function gamble() {
+                if(Math.random() < p) {
+                    stake *= 2;
+                } else {
+                    stake = 1;
+                }
+                document.getElementById("stake").innerHTML = "Amount at stake: $" + stake/1000;
+            }
+
+            function cashin() {
+                document.getElementById("cashin").disabled = true;
+                setTimeout(function() {
+                    document.getElementById("cashin").disabled = false;
+                }, 5000)
+                money += stake;
+                stake = 1;
+                document.getElementById("stake").innerHTML = "Amount at stake: $" + stake/1000;
+                document.getElementById("money").innerHTML = "Money: $" + money/1000;
+            }
+
+            function upgrade(type) {
+                if(money < upgrade_costs[type]) {
+                    return;
+                }
+                money -= upgrade_costs[type];
+                
+                switch(type) {
+                    case 0:
+                        p = (100*p+1)/100; //floating point errors
+                        document.getElementById("p").innerHTML = "p = " + p
+                        upgrade_costs[type] += 10;
+                        break;
+                }
+                document.getElementById("cost" + type).innerHTML = "Cost: $" + upgrade_costs[type]/1000;
+            }
+
+        </script>
+    </body>
+</html>
