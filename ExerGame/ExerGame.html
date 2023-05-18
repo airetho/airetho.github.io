@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>Exercise Game</title>
+	<link rel="stylesheet" type="text/css" href="./StyleSheet.css"/>
+</head>
+	<body>
+		<h1>Exercise Game</h1>
+		<div class="box">
+			<h4>Enter a workout:</h4>
+			
+			Average speed (mph): 
+			<input type="number" id="speed">
+			<br>
+			Time (minutes): 
+			<input type="number" id="time">
+			<br>
+			<button onclick="submit()">Submit</button>
+		</div>
+
+		<br>
+		<div id="level">
+		Level: 1
+		<br>
+		<progress value="0" max="100"></progress>
+		XP: 0/100
+		</div>
+		
+
+
+
+		<script>
+			player = {
+				level: 0,
+				xp: 0
+			}
+
+			function updateText() {
+				document.getElementById('level').innerHTML = 'Level: ' + player.level +
+				'<br>' +
+				'<progress value="' + player.xp + '" max="' + (player.level*100+500) + '"></progress>' + 
+				'XP: ' + player.xp + '/' + (player.level*100+500);
+			}
+
+			function addXP(XP) {
+				player.xp += XP;
+				while(player.xp >= player.level*100+500) { //XP to level formula!
+					player.xp -= player.level*100+500
+					player.level++;
+				}
+				save();
+				updateText();
+			}
+
+			function submit() {
+				speed = document.getElementById('speed').value;
+				document.getElementById('speed').value = '';
+				time = document.getElementById('time').value;
+				document.getElementById('time').value = '';
+
+				addXP(Math.floor(speed*speed*time));
+			}
+
+			function save() {
+				localStorage.setItem('save', JSON.stringify(player));
+			}
+
+			function load() {
+				player = JSON.parse(localStorage.getItem('save'));
+				updateText();
+			}
+
+			function reset() {
+				player.level = 0;
+				player.xp = 0;
+				save();
+				updateText();
+			}
+
+			if(localStorage.getItem('save') != undefined) {
+				load();
+			}
+
+		</script>
+	</body>
+</html>

@@ -1,0 +1,13 @@
+﻿body {
+    background-color: skyblue;
+}
+
+td {
+    border: solid;
+    text-align: center;
+    padding: 3px;
+}
+
+.box {
+    border: solid;
+}
