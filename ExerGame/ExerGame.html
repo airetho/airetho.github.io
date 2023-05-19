@@ -10,21 +10,27 @@
 		<div class="box">
 			<h4>Enter a workout:</h4>
 			
-			Average speed (mph): 
-			<input type="number" id="speed">
+			Distance (miles): 
+			<input type="number" id="distance">
 			<br>
 			Time (minutes): 
 			<input type="number" id="time">
 			<br>
 			<button onclick="submit()">Submit</button>
+			<div class="green" id="xptxt"></div>
 		</div>
 
 		<br>
 		<div id="level">
-		Level: 1
+		Level: 0
 		<br>
 		<progress value="0" max="100"></progress>
-		XP: 0/100
+		XP: 0/500
+		</div>
+
+		<div class="box" id="combat" hidden>
+			<div id="attack">Attack: 0</div>
+			<div id="health">Health: 0</div>
 		</div>
 		
 
@@ -33,7 +39,12 @@
 		<script>
 			player = {
 				level: 0,
-				xp: 0
+				xp: 0,
+				attack: 0,
+				health: 0,
+				distance: 0,
+				time: 0,
+				version: 1
 			}
 
 			function updateText() {
@@ -41,25 +52,50 @@
 				'<br>' +
 				'<progress value="' + player.xp + '" max="' + (player.level*100+500) + '"></progress>' + 
 				'XP: ' + player.xp + '/' + (player.level*100+500);
+
+				document.getElementById('attack').innerHTML = 'Attack: ' + Math.floor(player.attack);
+				document.getElementById('health').innerHTML = 'Health: ' + Math.floor(player.health);
+
+				unlock();
 			}
 
 			function addXP(XP) {
 				player.xp += XP;
-				while(player.xp >= player.level*100+500) { //XP to level formula!
+				while(player.xp >= player.level*100+500) { //XP to level formula
 					player.xp -= player.level*100+500
 					player.level++;
 				}
+
+				player.attack = Math.sqrt(player.level*player.distance);
+				player.health = Math.sqrt(player.level);
 				save();
 				updateText();
 			}
 
-			function submit() {
-				speed = document.getElementById('speed').value;
-				document.getElementById('speed').value = '';
-				time = document.getElementById('time').value;
+			function submit() { //add workout
+				distance = parseFloat(document.getElementById('distance').value);
+				document.getElementById('distance').value = '';
+				time = parseFloat(document.getElementById('time').value);
 				document.getElementById('time').value = '';
 
-				addXP(Math.floor(speed*speed*time));
+				if(distance <= 0) {
+					alert('Invalid Distance');
+					return;
+				}
+				if(time <= 0) {
+					alert('Invalid Time');
+					return;
+				}
+
+				addXP(Math.floor(distance*distance*3600/time));
+				player.distance += distance;
+				player.time += time;
+			}
+
+			function unlock() { //manages unlocking new features
+				if(player.level >= 5) {
+					document.getElementById('combat').hidden = false;
+				}
 			}
 
 			function save() {
@@ -67,19 +103,40 @@
 			}
 
 			function load() {
-				player = JSON.parse(localStorage.getItem('save'));
+				player = SAVE;
 				updateText();
 			}
 
 			function reset() {
-				player.level = 0;
-				player.xp = 0;
+				localStorage.clear();
 				save();
 				updateText();
 			}
 
-			if(localStorage.getItem('save') != undefined) {
-				load();
+			function objCopy(from, to) { //copies the existing datafields in SAVE over to player
+				for(const x in to) {
+					console.log('trying to copy ' + x);
+					console.log('to.x ' + to[x]);
+					console.log('from.x ' + from[x]);
+					if(from[x] != undefined && x != 'version') {
+						if(typeof(to[x]) == 'object') {
+							objCopy(from[x], to[x]);
+						} else {
+							console.log(x + ' set to ' + from[x]);
+							to[x] = from[x];
+						}
+					}
+				}
+			}
+
+			SAVE = JSON.parse(localStorage.getItem('save')); //unbelievably scuffed
+			if(SAVE != null) {
+				if(SAVE.version == player.version) {
+					load();
+				} else {
+					objCopy(SAVE, player);
+					updateText();
+				}
 			}
 
 		</script>
